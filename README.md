@@ -53,6 +53,8 @@ Continuous integration helps reducing the bugs in your code: every time you intr
 - Code formatting check (```flutter format```)
 - Static dart analisis (```flutter analyze```)
 - Tests (```flutter test```)
+### Flutter version
+You can change the Flutter version and channel in the [workflow](.github/workflows/ci.yml) file, by changing the value of "flutter-version" and "channel" inputs in the flutter-action (more infos on the [flutter-action page](https://github.com/marketplace/actions/flutter-action)).
 
 ## Continuous Deployment
 ### Create a new release
