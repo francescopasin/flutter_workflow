@@ -39,3 +39,9 @@ app.*.symbols
 
 # Obfuscation related
 app.*.map.json
+
+# Android keys
+key.jks
+key.properties
+service_account_key.json
+android_keys.zip
