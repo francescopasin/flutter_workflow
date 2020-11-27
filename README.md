@@ -1,4 +1,6 @@
 # flutter_workflow
+![ci](https://github.com/francescopasin/flutter_workflow/workflows/Flutter%20CI/badge.svg)  
+
 This repository describes a CI and CD workflow for Flutter mobile apps.
 [Github Actions](https://github.com/features/actions) and [Fastlane](https://fastlane.tools) are used for CI/CD.
 
