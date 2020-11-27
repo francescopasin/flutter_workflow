@@ -32,7 +32,7 @@ Inside the [fastlane/Appfile](android/fastlane/Appfile) file insert your package
 ### Generate Google service account
 Follow [fastlane's instruction](https://docs.fastlane.tools/getting-started/android/setup/#collect-your-google-credentials) to create a service account connected to your play console. Rename the downloaded .json configuration file "service_account_key.json" and copy it in the android folder. You can verify that the connection with the play console works following the instruction on the link above (you must have fastlane installed in order to do this).
 ### Configure app signing
-Follow the [instruction on the Flutter documentation](https://flutter.dev/docs/deployment/android#create-a-keystore) to create a keystore file. Copy it in the android folder. Then create a "key.properties" file in the android folder and insert the key path and the password from the step above (follow the instruction on the [Flutter documentation](https://flutter.dev/docs/deployment/android#reference-the-keystore-from-the-app)).
+Follow the [instruction on the Flutter documentation](https://flutter.dev/docs/deployment/android#create-a-keystore) to create a keystore file. Copy it in the android folder. Then create a "key.properties" file in the android folder and insert the key path (**the path is relative to the android/app folder and not to the folder where the file is.** So if the the key file is in the android folder you should set the key path like this: ```../key.jks```) and the password from the step above (follow the instruction on the [Flutter documentation](https://flutter.dev/docs/deployment/android#reference-the-keystore-from-the-app)).
 ### Encrypt sensitive files
 Your keys files should be encrypted for security.  
 - Create a zip (named "android_keys.zip") with the 3 files you just created:  
@@ -55,6 +55,12 @@ android_keys.zip
 ```
 ### Develop
 Now you are ready to get started! Clone your repo locally and create your new Flutter project (if you didn't already copied everything). For more information see the sections below.
+### Gradle config
+TODO
+### First build and play console configuration
+TODO
+### Fastlane supply and metadata
+TODO
 
 ## Versioning workflow guidelines
 This section suggests how you should manage your branches, pull requests, reviews and releases.  
