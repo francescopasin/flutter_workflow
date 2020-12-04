@@ -1,4 +1,4 @@
-# flutter_workflow
+# Flutter CI/CD workflow
 ![ci](https://github.com/francescopasin/flutter_workflow/workflows/Flutter%20CI/badge.svg)  
 
 This repository describes a CI and CD workflow for Flutter mobile apps.
@@ -11,56 +11,9 @@ This repository describes a CI and CD workflow for Flutter mobile apps.
 
 ## How to use this
 This repository can be used as a template for your Flutter projects. Just download the repository code and create your own new repo.
-
-### Github actions
-Copy all the files inside the [.github/workflows](.github/workflows) directory and insert them in the same directory in your repository (if you didn't already copied everything).
-### Github settings
-In your repository go to the "Settings" page and set the following settings.
-#### Project collaborators
-You can add your team members to your repo by adding their Github accounts in the "Manage access" tab.
-#### Automatic branch deletion
-If you want your branches to be automatically deleted after a successfully merge you can set this in the "General" tab under the "Merge button" section ("Automatically delete head branches").
-#### Setup branch protection
-Your main branch should be protected, in order to allow commits only with pull requests.  
-Go to the "Branches" tab and add a new branch protection rule. Name it as you want (I simply suggest "main") and set the following settings:
-- "Require pull request reviews before merging". This ensures that a pull request is approved by a minimum amount of people (set in the "Required approving reviews") before it can be merged). You can also set the "Require review from Code Owners" if you want the pull requests to be always approved by the code owners.
-- "Require status checks to pass before merging" (and check all the status check in the section below). Every time you make a pull requests the CI workflow starts and with this options you "lock" the possibility to merge unless all the tests have passed. If you want to reduce merge conflicts you should also set "Require branches to be up to date before merging".
-- "Include administrators". It should be checked in order to prevent the amministrators to merge a request even if it doesn't pass the tests.
-### Fastlane configuration
-Copy all the files inside the [android/fastlane](android/fastlane) directory and insert them in the same directory in your repository (if you didn't already copied everything). If you don't already have the "android" folder, or you don't started from the code of this repository, create a new Flutter project.  
-Inside the [fastlane/Appfile](android/fastlane/Appfile) file insert your package name inside the "package_name" configuration.
-### Generate Google service account
-Follow [fastlane's instruction](https://docs.fastlane.tools/getting-started/android/setup/#collect-your-google-credentials) to create a service account connected to your play console. Rename the downloaded .json configuration file "service_account_key.json" and copy it in the android folder. You can verify that the connection with the play console works following the instruction on the link above (you must have fastlane installed in order to do this).
-### Configure app signing
-Follow the [instruction on the Flutter documentation](https://flutter.dev/docs/deployment/android#create-a-keystore) to create a keystore file. Copy it in the android folder. Then create a "key.properties" file in the android folder and insert the key path (**the path is relative to the android/app folder and not to the folder where the file is.** So if the the key file is in the android folder you should set the key path like this: ```../key.jks```) and the password from the step above (follow the instruction on the [Flutter documentation](https://flutter.dev/docs/deployment/android#reference-the-keystore-from-the-app)).
-### Encrypt sensitive files
-Your keys files should be encrypted for security.  
-- Create a zip (named "android_keys.zip") with the 3 files you just created:  
-```zip android_keys.zip key.jks key.properties service_account_key.json```
-- Ecrypt the zip archive using [GPG](https://gnupg.org/) (remember the password you set because is needed later):   
-```gpg --symmetric --cipher-algo AES256 android_keys.zip```
-- This file will be automatically decrypted in the CD workflow (see the [decrypt script](.github/scripts/decrypt_android_secrets.sh)).
-### Github secrets
-The password you used to encrypt the keys needs to be set in the Github secrets, in order to be used during the CD workflow.  
-Go to the Github settings page, in the Secrets tab and create a new secret named ```ANDROID_KEYS_SECRET_PASSPHRASE```. Set as value the password you created in the step before.
-### Gitignore
-If you didn't just copied this repository is important that you remove all the keys files from the version control.  
-Add the following to the .gitignore:
-```.gitignore
-# Android keys
-key.jks
-key.properties
-service_account_key.json
-android_keys.zip
-```
-### Develop
-Now you are ready to get started! Clone your repo locally and create your new Flutter project (if you didn't already copied everything). For more information see the sections below.
-### Gradle config
-TODO
-### First build and play console configuration
-TODO
-### Fastlane supply and metadata
-TODO
+If you want to start from scratch you can follow the step by step guide.
+- [Quick setup](#quick-setup)
+- [Step by step setup](#step-by-step-setup)
 
 ## Versioning workflow guidelines
 This section suggests how you should manage your branches, pull requests, reviews and releases.  
@@ -94,3 +47,98 @@ You can change the Flutter version and channel in the [workflow](.github/workflo
 ## Continuous Deployment
 ### Create a new release
 **TODO**
+
+## Quick setup
+The following guide let you have a ready-to-start project with almost all the configurations and CI/CD actions already done. The configuration process may seem a bit long at the beginning but it will reduce your release time a lot.
+### Repository setup
+1. Copy this repository (clone it or download it)
+1. Create your remote repository on github and connect it to the local repo you just copied (and push the code to the remote)
+1. Configure repository's settings:
+   - Turn on "Automatically delete head branches" under the "Merge button" section in the "General" tab (optional)
+   - Add your team members in the "Manage access" tab (optional)
+   - Setup main branch protection: in the "Branches" tab add a new branch protection rule and name it as you want (I simply suggest "main"), then set the following settings:
+     - "Require pull request reviews before merging". This ensures that a pull request is approved by a minimum amount of people (set in the "Required approving reviews") before it can be merged). You can also set the "Require review from Code Owners" if you want the pull requests to be always approved by the code owners.
+     - "Require status checks to pass before merging" (and check all the status check in the section below). Every time you make a pull requests the CI workflow starts and with this options you "lock" the possibility to merge unless all the tests have passed. If you want to reduce merge conflicts you should also set "Require branches to be up to date before merging".
+     - "Include administrators". It should be checked in order to prevent the amministrators to merge a request even if it doesn't pass the tests.
+
+Read [Versioning workflow guidelines](#versioning-workflow-guidelines) for more info on how to organize your repository.
+### Android setup
+1. Choose your package name. Choose your unique package name (or applicationId) and set it in the following files:
+   - ```android/app/build.gradle``` in the ```defaultConfig``` section after the ```applicationId``` key
+   - ```android/fastlane/Appfile``` inside ```package_name```
+1. Create your android signing key:
+   1. Create a keystore https://flutter.dev/docs/deployment/android#create-a-keystore (remember the password you set because is needed later)
+   1. Move the file you just created in the ```android``` folder
+   1. Create a file named ```key.properties``` in the ```android``` folder
+   1. Inside the ```key.properties``` file write the following:  
+      ```properties
+      storePassword=<PASSWORD_YOU_SET_IN_STEP_1>
+      keyPassword=<PASSWORD_YOU_SET_IN_STEP_1>
+      keyAlias=key
+      storeFile=../key.jks```
+1. Create Google service account (this step requires you to already have set up the app on the play console):
+   1. Follow the steps on http://docs.fastlane.tools/getting-started/android/setup/#collect-your-google-credentials to download your service account key
+   1. Move the .json file you just downloaded in the ```android``` folder and rename it ```service_account_key.json```
+1. Encrypt android keys (for security reasons):
+   1. Create a zip (named ```android_keys.zip```) with the 3 files you just created:  
+   ```zip android_keys.zip key.jks key.properties service_account_key.json```
+   1. Ecrypt the zip archive using [GPG](https://gnupg.org/) (remember the password you set because is needed later):   
+   ```gpg --symmetric --cipher-algo AES256 android_keys.zip```  
+  **Attention: you should NEVER upload your signing keys and service account keys. The only file that can be uploaded is the encrypted archive.**
+1. The password you used to encrypt the keys needs to be set in the Github secrets, in order to be used during the CD workflow.  
+Go to the Github settings page, in the "Secrets" tab and create a new secret named ```ANDROID_KEYS_SECRET_PASSPHRASE```. Set as value the password you created in the step before.
+
+**IMPORTANT**  
+You have to manually create a first build and upload it on the store or Fastlane won't work.
+
+### Apple setup
+**TODO**
+
+### Automatic store metadata
+The CD tools will upload all the metadata (description, screenshot...) to the stores.
+All the Play Console metadata are inside the ```android/fastlane/metadata``` folder, divided into folders for each language. Every time your app is automatically deployed also the metadata are deployed. You can grab the metadata from your play console by running ```fastlane supply init``` in your ```android``` folder (see https://docs.fastlane.tools/getting-started/android/setup/#fetch-your-app-metadata).
+If you don't want to use this functionality you can disable it by adding the following lines to the ```upload_to_play_store``` function in the ```android/fastlans/Fastfile``` file:
+```
+skip_upload_metadata: true,
+skip_upload_images: true,
+skip_upload_screenshots: true
+```
+
+### Develop! 
+Now you are ready to start developing your app. The automatic CI and CD actions will improve your workflow and ensure the stability of your code. For more info read the three section in [What's included](#what's-included)
+
+## Step by step setup
+The following guide let you create and configure everything from scratch. If you want to reduce your boilerplate see the [Quick setup](#quick-setup) section.
+
+### Github actions
+TODO
+### Github settings
+TODO
+#### Project collaborators
+TODO
+#### Automatic branch deletion
+TODO
+#### Setup branch protection
+TODO
+### Fastlane configuration
+TODO
+### Generate Google service account
+TODO
+### Configure app signing
+TODO
+### Encrypt sensitive files
+TODO
+### Github secrets
+TODO
+### Gitignore
+TODO
+### Gradle config
+TODO
+### First build and play console configuration
+TODO
+### Fastlane supply and metadata
+TODO
+
+
+
+
