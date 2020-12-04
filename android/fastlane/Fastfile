@@ -1,0 +1,20 @@
+default_platform(:android)
+
+platform :android do
+  desc 'Deploy to closed alpha track'
+  lane :closed_alpha do
+    begin
+      gradle(task: 'clean')
+      gradle(
+        task: 'bundle',
+        build_type: 'Release'
+      )
+      upload_to_play_store(
+        track: 'alpha',
+        aab: '../build/app/outputs/bundle/release/app-release.aab',
+        release_status: "draft",
+        version_code: flutter_version()["version_code"],
+      )
+    end
+  end
+end
