@@ -47,7 +47,9 @@ You can change the Flutter version and channel in the [workflow](.github/workflo
 ## Continuous Deployment
 This repository contains a [workflow](.github/workflows/cd.yml) for github actions that manage continuos deployment on specific tags.
 ### Create a new release
-**TODO**
+When you are ready to create a new release you can simple create a new tag on the main branch. The tag should be in the format ```v<version>``` where ```<version>``` is the version of your app (like 1.0.0. The use of [semantic versioning](https://semver.org/) for your app is strongly recommended.  
+If you need to create Android or Ios only releases you can prefix your tag with ```android-``` or ```ios-``` respectively.  
+Every time you add a release tag the app is deployed to the stores and a new github release is created.
 
 ## Quick setup
 The following guide let you have a ready-to-start project with almost all the configurations and CI/CD actions already done. The configuration process may seem a bit long at the beginning but it will reduce your release time a lot.
