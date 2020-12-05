@@ -16,11 +16,11 @@ or alternatively using `brew install fastlane`
 
 # Available Actions
 ## Android
-### android closed_alpha
+### android deploy_internal
 ```
-fastlane android closed_alpha
+fastlane android deploy_internal
 ```
-Deploy to closed alpha track
+Deploy to internal test track
 
 ----
 
