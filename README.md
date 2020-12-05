@@ -45,6 +45,7 @@ Continuous integration helps reducing the bugs in your code: every time you intr
 You can change the Flutter version and channel in the [workflow](.github/workflows/ci.yml) file, by changing the value of "flutter-version" and "channel" inputs in the flutter-action (more infos on the [flutter-action page](https://github.com/marketplace/actions/flutter-action)).
 
 ## Continuous Deployment
+This repository contains a [workflow](.github/workflows/cd.yml) for github actions that manage continuos deployment on specific tags.
 ### Create a new release
 **TODO**
 
@@ -139,6 +140,10 @@ TODO
 ### Fastlane supply and metadata
 TODO
 
+## Credits
+Andrea Valenzano for the tags parsing function : https://gist.github.com/andrea689/307b5c3e37c117bb0acad8798bf84baa#file-flutter_publish_release-yml-L1
+
+Joshua de Guzman for the fastlane configuration and workflows inspiration: https://blog.joshuadeguzman.net/continuous-delivery-for-your-flutter-using-fastlane-github-actions-android
 
 
 

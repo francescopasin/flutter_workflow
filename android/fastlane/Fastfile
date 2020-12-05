@@ -1,8 +1,8 @@
 default_platform(:android)
 
 platform :android do
-  desc 'Deploy to closed alpha track'
-  lane :closed_alpha do
+  desc 'Deploy to internal test track'
+  lane :deploy_internal do
     begin
       gradle(task: 'clean')
       gradle(
@@ -10,9 +10,10 @@ platform :android do
         build_type: 'Release'
       )
       upload_to_play_store(
-        track: 'alpha',
+        track: 'internal',
         aab: '../build/app/outputs/bundle/release/app-release.aab',
         release_status: "draft",
+        skip_upload_apk: true,
         version_code: flutter_version()["version_code"],
       )
     end
